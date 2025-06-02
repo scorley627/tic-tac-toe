@@ -1,0 +1,21 @@
+.gameboard {
+  width: 80%;
+  aspect-ratio: 1 / 1;
+  position: absolute;
+  left: 10%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 3px;
+  background-color: black;
+}
+
+.gameboard__cell {
+  background-color: white;
+  font-size: 20vw;
+  font-family: 'Courier New', Courier, monospace;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: default;
+}

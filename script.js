@@ -5,19 +5,17 @@ const Gameboard = (function () {
     [".", ".", "."],
   ];
 
-  const displayBoard = function () {
-    let result = "";
-    for (const row of board) {
-      for (const cell of row) {
-        result += cell + " ";
-      }
-      result += "\n";
+  const setCell = function (marker, row, col) {
+    if (board[row][col] == ".") {
+      board[row][col] = marker;
+      return true;
+    } else {
+      return false;
     }
-    console.log(result);
   };
 
-  const setCell = function (marker, row, col) {
-    board[row][col] = marker;
+  const getBoard = function () {
+    return board;
   };
 
   const checkWinner = function () {
@@ -45,6 +43,14 @@ const Gameboard = (function () {
       board[0][2] != "." &&
       board[0][2] == board[1][2] &&
       board[1][2] == board[2][2];
+    const diag1Match =
+      board[0][0] != "." &&
+      board[0][0] == board[1][1] &&
+      board[1][1] == board[2][2];
+    const diag2Match =
+      board[0][2] != "." &&
+      board[0][2] == board[1][1] &&
+      board[1][1] == board[2][0];
     const boardFull = board.reduce(
       (full, row) => full && !row.includes("."),
       true
@@ -56,6 +62,8 @@ const Gameboard = (function () {
       return board[1][1];
     } else if (row3Match || col3Match) {
       return board[2][2];
+    } else if (diag1Match || diag2Match) {
+      return board[1][1];
     } else if (boardFull) {
       return "TIE";
     }
@@ -63,42 +71,64 @@ const Gameboard = (function () {
     return null;
   };
 
-  return { displayBoard, setCell, checkWinner };
+  return { setCell, getBoard, checkWinner };
 })();
 
 function createPlayer(name, marker) {
-  function getMove() {
-    const response = prompt(name + " enter cell to mark ('row col'):");
-    const [row, col] = response.split(" ");
-    return [Number(row), Number(col)];
-  }
-  return { name, marker, getMove };
+  const getName = function () {
+    return name;
+  };
+
+  const getMarker = function () {
+    return marker;
+  };
+
+  return { getName, getMarker };
 }
 
-const Game = (function () {
-  const playGame = function () {
-    const player1 = createPlayer("Player 1", "X");
-    const player2 = createPlayer("Player 2", "O");
-
-    let winner = null;
-    let activePlayer = player1;
-    while (winner == null) {
-      Gameboard.displayBoard();
-      const move = activePlayer.getMove();
-      Gameboard.setCell(activePlayer.marker, move[0], move[1]);
-      Gameboard.displayBoard();
-      winner = Gameboard.checkWinner();
-      activePlayer = activePlayer == player1 ? player2 : player1;
+const DisplayController = (function () {
+  document.addEventListener("click", function (event) {
+    const cells = document.querySelectorAll(".gameboard__cell");
+    for (let i = 0; i < cells.length; ++i) {
+      if (cells[i] == event.target) {
+        const row = Math.floor(i / 3);
+        const col = i % 3;
+        Game.playMove(row, col);
+      }
     }
+  });
 
-    if (winner == "TIE") {
-      console.log(winner);
-    } else {
-      const winnerName = player1.marker == winner ? player1.name : player2.name;
-      console.log("Winner: " + winnerName);
+  const displayBoard = function () {
+    const board = Gameboard.getBoard();
+    const cells = document.querySelectorAll(".gameboard__cell");
+    for (let row = 0; row < board.length; ++row) {
+      for (let col = 0; col < board[0].length; ++col) {
+        if (board[row][col] != ".") {
+          cells[row * 3 + col].textContent = board[row][col];
+        }
+      }
     }
   };
-  return { playGame };
+
+  return { displayBoard };
 })();
 
-Game.playGame();
+const Game = (function () {
+  const player1 = createPlayer("Player 1", "X");
+  const player2 = createPlayer("Player 2", "O");
+  let activePlayer = player1;
+  let gameOver = false;
+
+  const playMove = function (row, col) {
+    if (!gameOver && Gameboard.setCell(activePlayer.getMarker(), row, col)) {
+      DisplayController.displayBoard();
+      activePlayer = activePlayer == player1 ? player2 : player1;
+
+      if (Gameboard.checkWinner() != null) {
+        gameOver = true;
+      }
+    }
+  };
+
+  return { playMove };
+})();
