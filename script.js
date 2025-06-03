@@ -80,6 +80,35 @@ const DisplayController = (function () {
     }
   });
 
+  document.addEventListener("keypress", function (event) {
+    const isPlayerName = Array.from(
+      document.querySelectorAll(".game-header h1")
+    ).includes(event.target);
+
+    if (isPlayerName && event.key == "Enter") {
+      event.preventDefault();
+      event.target.blur();
+    }
+  });
+
+  document.addEventListener("focusout", function (event) {
+    const playerNames = Array.from(
+      document.querySelectorAll(".game-header h1")
+    );
+    const isPlayerName = playerNames.includes(event.target);
+    const playerNameBlank = isPlayerName && event.target.textContent == "";
+    const playerNamesMatch =
+      isPlayerName && playerNames[0].textContent == playerNames[1].textContent;
+
+    if (playerNameBlank) {
+      event.target.textContent =
+        event.target == playerNames[0] ? "Player 1" : "Player 2";
+    } else if (playerNamesMatch) {
+      playerNames[0].textContent += " 1";
+      playerNames[1].textContent += " 2";
+    }
+  });
+
   return { displayBoard, switchActivePlayerName };
 })();
 
