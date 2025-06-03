@@ -33,12 +33,16 @@
   opacity: 0.3;
 }
 
-.gameboard {
+.gameboard,
+canvas {
   width: 600px;
   height: 600px;
   position: absolute;
   left: calc(50% - 300px);
   margin-top: 32px;
+}
+
+.gameboard {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
@@ -49,9 +53,13 @@
 .gameboard__cell {
   background-color: white;
   font-size: 150px;
-  font-family: 'Courier New', Courier, monospace;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: default;
+}
+
+.canvas--visible {
+  z-index: 1;
 }

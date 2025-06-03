@@ -22,8 +22,12 @@ const Game = (function () {
       DisplayController.displayBoard();
       DisplayController.switchActivePlayerName();
 
-      if (Gameboard.checkWinner() != null) {
+      const winner = Gameboard.checkWinner();
+      if (winner != null) {
         gameOver = true;
+        if (winner != "TIE") {
+          DisplayController.drawWinningLine();
+        }
       }
     }
   };
@@ -33,6 +37,16 @@ const Game = (function () {
 
 const DisplayController = (function () {
   let activePlayerName = null;
+  const lineCoords = new Map([
+    ["row1", [0, 200, 1200, 200]],
+    ["row2", [0, 600, 1200, 600]],
+    ["row3", [0, 1000, 1200, 1000]],
+    ["col1", [200, 0, 200, 1200]],
+    ["col2", [600, 0, 600, 1200]],
+    ["col3", [1000, 0, 1000, 1200]],
+    ["diag1", [50, 50, 1150, 1150]],
+    ["diag2", [1150, 50, 50, 1150]],
+  ]);
 
   const displayBoard = function () {
     const board = Gameboard.getBoard();
@@ -44,6 +58,23 @@ const DisplayController = (function () {
         }
       }
     }
+  };
+
+  const drawWinningLine = function () {
+    const winningLine = Gameboard.getWinningLine();
+    const coords = lineCoords.get(winningLine);
+    const canvas = document.querySelector("canvas");
+    const context = canvas.getContext("2d");
+
+    canvas.width = 1200;
+    canvas.height = 1200;
+    canvas.className = "canvas--visible";
+    context.lineWidth = 10;
+
+    context.beginPath();
+    context.moveTo(coords[0], coords[1]);
+    context.lineTo(coords[2], coords[3]);
+    context.stroke();
   };
 
   const switchActivePlayerName = function () {
@@ -112,7 +143,7 @@ const DisplayController = (function () {
     }
   });
 
-  return { displayBoard, switchActivePlayerName };
+  return { displayBoard, drawWinningLine, switchActivePlayerName };
 })();
 
 function createPlayer(name, marker) {
@@ -128,6 +159,7 @@ function createPlayer(name, marker) {
 }
 
 const Gameboard = (function () {
+  let winningLine = null;
   let board = [
     [".", ".", "."],
     [".", ".", "."],
@@ -186,12 +218,16 @@ const Gameboard = (function () {
     );
 
     if (row1Match || col1Match) {
+      winningLine = row1Match ? "row1" : "col1";
       return board[0][0];
     } else if (row2Match || col2Match) {
+      winningLine = row2Match ? "row2" : "col2";
       return board[1][1];
     } else if (row3Match || col3Match) {
+      winningLine = row3Match ? "row3" : "col3";
       return board[2][2];
     } else if (diag1Match || diag2Match) {
+      winningLine = diag1Match ? "diag1" : "diag2";
       return board[1][1];
     } else if (boardFull) {
       return "TIE";
@@ -200,5 +236,9 @@ const Gameboard = (function () {
     return null;
   };
 
-  return { setCell, getBoard, checkWinner };
+  const getWinningLine = function () {
+    return winningLine;
+  };
+
+  return { setCell, getBoard, checkWinner, getWinningLine };
 })();
