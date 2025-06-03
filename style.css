@@ -22,11 +22,15 @@
   height: 50px;
   border: none;
   border-radius: 25px;
-  background-color: rgb(0, 175, 0);
   color: white;
   font-weight: bold;
   font-size: 20px;
   cursor: pointer;
+  background-color: rgb(0, 175, 0);
+}
+
+.start-button--restart {
+  background-color: rgb(255, 63, 63);
 }
 
 .start-button:disabled {

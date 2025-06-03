@@ -12,6 +12,13 @@ const Game = (function () {
     gameStarted = true;
   };
 
+  const restartGame = function () {
+    Gameboard.reset();
+    DisplayController.resetBoard();
+    activePlayer = player1;
+    gameOver = false;
+  };
+
   const playMove = function (row, col) {
     if (!gameStarted || gameOver) {
       return;
@@ -24,6 +31,7 @@ const Game = (function () {
         const winMessage =
           winner == "TIE" ? "Tie!" : `${activePlayer.getName()} wins!`;
         DisplayController.showWinner(winMessage);
+        DisplayController.showRestartButton();
         gameOver = true;
       } else {
         activePlayer = activePlayer == player1 ? player2 : player1;
@@ -32,7 +40,7 @@ const Game = (function () {
     }
   };
 
-  return { startGame, playMove };
+  return { startGame, restartGame, playMove };
 })();
 
 const DisplayController = (function () {
@@ -60,6 +68,17 @@ const DisplayController = (function () {
     }
   };
 
+  const resetBoard = function () {
+    const cells = document.querySelectorAll(".gameboard__cell");
+    for (const cell of cells) {
+      cell.textContent = "";
+    }
+    const canvas = document.querySelector("canvas");
+    const context = canvas.getContext("2d");
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    canvas.className = "";
+  };
+
   const showWinner = function (message) {
     if (message != "Tie!") {
       const winningLine = Gameboard.getWinningLine();
@@ -77,9 +96,18 @@ const DisplayController = (function () {
       context.lineTo(coords[2], coords[3]);
       context.stroke();
     }
+    activePlayerName.className = "";
+    activePlayerName = null;
     setTimeout(() => {
       alert(message);
     });
+  };
+
+  const showRestartButton = function () {
+    const startButton = document.querySelector(".start-button");
+    startButton.className += " start-button--restart";
+    startButton.textContent = "Restart Game";
+    startButton.disabled = false;
   };
 
   const switchActivePlayerName = function () {
@@ -111,14 +139,29 @@ const DisplayController = (function () {
     Game.startGame(playerNames[0].textContent, playerNames[1].textContent);
   };
 
+  const handleClickRestartButton = function (restartButton) {
+    restartButton.disabled = true;
+    const playerNames = Array.from(
+      document.querySelectorAll(".game-header h1")
+    );
+    activePlayerName = playerNames[0];
+    activePlayerName.className = "player-name--active";
+    Game.restartGame();
+  };
+
   document.addEventListener("click", function (event) {
     const isCell = event.target.className == "gameboard__cell";
     const isStartButton = event.target.className == "start-button";
+    const isRestartButton = event.target.className.includes(
+      "start-button--restart"
+    );
 
     if (isCell) {
       handleClickOnCell(event.target);
     } else if (isStartButton) {
       handleClickStartButton(event.target);
+    } else if (isRestartButton) {
+      handleClickRestartButton(event.target);
     }
   });
 
@@ -156,7 +199,13 @@ const DisplayController = (function () {
     }
   });
 
-  return { displayBoard, showWinner, switchActivePlayerName };
+  return {
+    displayBoard,
+    resetBoard,
+    showWinner,
+    showRestartButton,
+    switchActivePlayerName,
+  };
 })();
 
 function createPlayer(name, marker) {
@@ -186,6 +235,15 @@ const Gameboard = (function () {
     } else {
       return false;
     }
+  };
+
+  const reset = function () {
+    winningLine = null;
+    board = [
+      [".", ".", "."],
+      [".", ".", "."],
+      [".", ".", "."],
+    ];
   };
 
   const getBoard = function () {
@@ -253,5 +311,5 @@ const Gameboard = (function () {
     return winningLine;
   };
 
-  return { setCell, getBoard, checkWinner, getWinningLine };
+  return { setCell, reset, getBoard, checkWinner, getWinningLine };
 })();
