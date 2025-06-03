@@ -98,6 +98,9 @@ const DisplayController = (function () {
     const playerNames = Array.from(
       document.querySelectorAll(".game-header h1")
     );
+    for (const name of playerNames) {
+      name.contentEditable = false;
+    }
     activePlayerName = playerNames[0];
     activePlayerName.className = "player-name--active";
     Game.startGame(playerNames[0].textContent, playerNames[1].textContent);
