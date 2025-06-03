@@ -18,16 +18,16 @@ const Game = (function () {
     }
 
     if (Gameboard.setCell(activePlayer.getMarker(), row, col)) {
-      activePlayer = activePlayer == player1 ? player2 : player1;
       DisplayController.displayBoard();
-      DisplayController.switchActivePlayerName();
-
       const winner = Gameboard.checkWinner();
       if (winner != null) {
         gameOver = true;
         if (winner != "TIE") {
           DisplayController.drawWinningLine();
         }
+      } else {
+        activePlayer = activePlayer == player1 ? player2 : player1;
+        DisplayController.switchActivePlayerName();
       }
     }
   };
