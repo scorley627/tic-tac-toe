@@ -1,3 +1,100 @@
+const Game = (function () {
+  let player1 = null;
+  let player2 = null;
+  let activePlayer = null;
+  let gameStarted = false;
+  let gameOver = false;
+
+  const startGame = function () {
+    player1 = createPlayer("Player 1", "X");
+    player2 = createPlayer("Player 2", "O");
+    activePlayer = player1;
+    gameStarted = true;
+  };
+
+  const playMove = function (row, col) {
+    if (!gameStarted || gameOver) {
+      return;
+    }
+
+    if (Gameboard.setCell(activePlayer.getMarker(), row, col)) {
+      activePlayer = activePlayer == player1 ? player2 : player1;
+      DisplayController.displayBoard();
+      DisplayController.switchActivePlayerName();
+
+      if (Gameboard.checkWinner() != null) {
+        gameOver = true;
+      }
+    }
+  };
+
+  return { startGame, playMove };
+})();
+
+const DisplayController = (function () {
+  let activePlayerName = null;
+
+  const displayBoard = function () {
+    const board = Gameboard.getBoard();
+    const cells = document.querySelectorAll(".gameboard__cell");
+    for (let row = 0; row < board.length; ++row) {
+      for (let col = 0; col < board[0].length; ++col) {
+        if (board[row][col] != ".") {
+          cells[row * 3 + col].textContent = board[row][col];
+        }
+      }
+    }
+  };
+
+  const switchActivePlayerName = function () {
+    const playerNames = document.querySelectorAll(".game-header h1");
+    activePlayerName.className = "";
+    activePlayerName =
+      activePlayerName == playerNames[0] ? playerNames[1] : playerNames[0];
+    activePlayerName.className = "player-name--active";
+  };
+
+  const handleClickOnCell = function (clickedCell) {
+    const cells = document.querySelectorAll(".gameboard__cell");
+    const index = Array.from(cells).indexOf(clickedCell);
+    const row = Math.floor(index / 3);
+    const col = index % 3;
+    Game.playMove(row, col);
+  };
+
+  const handleClickStartButton = function (startButton) {
+    startButton.disabled = true;
+    activePlayerName = document.querySelector(".game-header h1:first-child");
+    activePlayerName.className = "player-name--active";
+    Game.startGame();
+  };
+
+  document.addEventListener("click", function (event) {
+    const isCell = event.target.className == "gameboard__cell";
+    const isStartButton = event.target.className == "start-button";
+
+    if (isCell) {
+      handleClickOnCell(event.target);
+    } else if (isStartButton) {
+      handleClickStartButton(event.target);
+    }
+  });
+
+  return { displayBoard, switchActivePlayerName };
+})();
+
+function createPlayer(name, marker) {
+  const getName = function () {
+    return name;
+  };
+
+  const getMarker = function () {
+    return marker;
+  };
+
+  return { getName, getMarker };
+}
+
 const Gameboard = (function () {
   let board = [
     [".", ".", "."],
@@ -72,101 +169,4 @@ const Gameboard = (function () {
   };
 
   return { setCell, getBoard, checkWinner };
-})();
-
-function createPlayer(name, marker) {
-  const getName = function () {
-    return name;
-  };
-
-  const getMarker = function () {
-    return marker;
-  };
-
-  return { getName, getMarker };
-}
-
-const DisplayController = (function () {
-  let activePlayerName = null;
-
-  const displayBoard = function () {
-    const board = Gameboard.getBoard();
-    const cells = document.querySelectorAll(".gameboard__cell");
-    for (let row = 0; row < board.length; ++row) {
-      for (let col = 0; col < board[0].length; ++col) {
-        if (board[row][col] != ".") {
-          cells[row * 3 + col].textContent = board[row][col];
-        }
-      }
-    }
-  };
-
-  const switchActivePlayerName = function () {
-    const playerNames = document.querySelectorAll(".game-header h1");
-    activePlayerName.className = "";
-    activePlayerName =
-      activePlayerName == playerNames[0] ? playerNames[1] : playerNames[0];
-    activePlayerName.className = "player-name--active";
-  };
-
-  const handleClickOnCell = function (clickedCell) {
-    const cells = document.querySelectorAll(".gameboard__cell");
-    const index = Array.from(cells).indexOf(clickedCell);
-    const row = Math.floor(index / 3);
-    const col = index % 3;
-    Game.playMove(row, col);
-  };
-
-  const handleClickStartButton = function (startButton) {
-    startButton.disabled = true;
-    activePlayerName = document.querySelector(".game-header h1:first-child");
-    activePlayerName.className = "player-name--active";
-    Game.startGame();
-  };
-
-  document.addEventListener("click", function (event) {
-    const isCell = event.target.className == "gameboard__cell";
-    const isStartButton = event.target.className == "start-button";
-
-    if (isCell) {
-      handleClickOnCell(event.target);
-    } else if (isStartButton) {
-      handleClickStartButton(event.target);
-    }
-  });
-
-  return { displayBoard, switchActivePlayerName };
-})();
-
-const Game = (function () {
-  let player1 = null;
-  let player2 = null;
-  let activePlayer = null;
-  let gameStarted = false;
-  let gameOver = false;
-
-  const startGame = function () {
-    player1 = createPlayer("Player 1", "X");
-    player2 = createPlayer("Player 2", "O");
-    activePlayer = player1;
-    gameStarted = true;
-  };
-
-  const playMove = function (row, col) {
-    if (!gameStarted || gameOver) {
-      return;
-    }
-
-    if (Gameboard.setCell(activePlayer.getMarker(), row, col)) {
-      activePlayer = activePlayer == player1 ? player2 : player1;
-      DisplayController.displayBoard();
-      DisplayController.switchActivePlayerName();
-
-      if (Gameboard.checkWinner() != null) {
-        gameOver = true;
-      }
-    }
-  };
-
-  return { startGame, playMove };
 })();
