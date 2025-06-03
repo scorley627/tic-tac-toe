@@ -121,10 +121,15 @@ const DisplayController = (function () {
     const isPlayerName = Array.from(
       document.querySelectorAll(".game-header h1")
     ).includes(event.target);
+    const playerNameFull =
+      isPlayerName && event.target.textContent.length == 20;
+    const isRemovingText = event.key == "Backspace" || event.key == "Delete";
 
     if (isPlayerName && event.key == "Enter") {
       event.preventDefault();
       event.target.blur();
+    } else if (playerNameFull && !isRemovingText) {
+      event.preventDefault();
     }
   });
 
