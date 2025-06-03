@@ -5,9 +5,9 @@ const Game = (function () {
   let gameStarted = false;
   let gameOver = false;
 
-  const startGame = function () {
-    player1 = createPlayer("Player 1", "X");
-    player2 = createPlayer("Player 2", "O");
+  const startGame = function (playerName1, playerName2) {
+    player1 = createPlayer(playerName1, "X");
+    player2 = createPlayer(playerName2, "O");
     activePlayer = player1;
     gameStarted = true;
   };
@@ -64,9 +64,12 @@ const DisplayController = (function () {
 
   const handleClickStartButton = function (startButton) {
     startButton.disabled = true;
-    activePlayerName = document.querySelector(".game-header h1:first-child");
+    const playerNames = Array.from(
+      document.querySelectorAll(".game-header h1")
+    );
+    activePlayerName = playerNames[0];
     activePlayerName.className = "player-name--active";
-    Game.startGame();
+    Game.startGame(playerNames[0].textContent, playerNames[1].textContent);
   };
 
   document.addEventListener("click", function (event) {
