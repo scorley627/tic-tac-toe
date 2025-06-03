@@ -87,16 +87,7 @@ function createPlayer(name, marker) {
 }
 
 const DisplayController = (function () {
-  document.addEventListener("click", function (event) {
-    const cells = document.querySelectorAll(".gameboard__cell");
-    for (let i = 0; i < cells.length; ++i) {
-      if (cells[i] == event.target) {
-        const row = Math.floor(i / 3);
-        const col = i % 3;
-        Game.playMove(row, col);
-      }
-    }
-  });
+  let activePlayerName = null;
 
   const displayBoard = function () {
     const board = Gameboard.getBoard();
@@ -110,19 +101,66 @@ const DisplayController = (function () {
     }
   };
 
-  return { displayBoard };
+  const switchActivePlayerName = function () {
+    const playerNames = document.querySelectorAll(".game-header h1");
+    activePlayerName.className = "";
+    activePlayerName =
+      activePlayerName == playerNames[0] ? playerNames[1] : playerNames[0];
+    activePlayerName.className = "player-name--active";
+  };
+
+  const handleClickOnCell = function (clickedCell) {
+    const cells = document.querySelectorAll(".gameboard__cell");
+    const index = Array.from(cells).indexOf(clickedCell);
+    const row = Math.floor(index / 3);
+    const col = index % 3;
+    Game.playMove(row, col);
+  };
+
+  const handleClickStartButton = function (startButton) {
+    startButton.disabled = true;
+    activePlayerName = document.querySelector(".game-header h1:first-child");
+    activePlayerName.className = "player-name--active";
+    Game.startGame();
+  };
+
+  document.addEventListener("click", function (event) {
+    const isCell = event.target.className == "gameboard__cell";
+    const isStartButton = event.target.className == "start-button";
+
+    if (isCell) {
+      handleClickOnCell(event.target);
+    } else if (isStartButton) {
+      handleClickStartButton(event.target);
+    }
+  });
+
+  return { displayBoard, switchActivePlayerName };
 })();
 
 const Game = (function () {
-  const player1 = createPlayer("Player 1", "X");
-  const player2 = createPlayer("Player 2", "O");
-  let activePlayer = player1;
+  let player1 = null;
+  let player2 = null;
+  let activePlayer = null;
+  let gameStarted = false;
   let gameOver = false;
 
+  const startGame = function () {
+    player1 = createPlayer("Player 1", "X");
+    player2 = createPlayer("Player 2", "O");
+    activePlayer = player1;
+    gameStarted = true;
+  };
+
   const playMove = function (row, col) {
-    if (!gameOver && Gameboard.setCell(activePlayer.getMarker(), row, col)) {
-      DisplayController.displayBoard();
+    if (!gameStarted || gameOver) {
+      return;
+    }
+
+    if (Gameboard.setCell(activePlayer.getMarker(), row, col)) {
       activePlayer = activePlayer == player1 ? player2 : player1;
+      DisplayController.displayBoard();
+      DisplayController.switchActivePlayerName();
 
       if (Gameboard.checkWinner() != null) {
         gameOver = true;
@@ -130,5 +168,5 @@ const Game = (function () {
     }
   };
 
-  return { playMove };
+  return { startGame, playMove };
 })();
