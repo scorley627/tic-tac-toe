@@ -31,7 +31,6 @@ const Game = (function () {
         const winMessage =
           winner == "TIE" ? "Tie!" : `${activePlayer.getName()} wins!`;
         DisplayController.showWinner(winMessage);
-        DisplayController.showRestartButton();
         gameOver = true;
       } else {
         activePlayer = activePlayer == player1 ? player2 : player1;
@@ -96,18 +95,17 @@ const DisplayController = (function () {
       context.lineTo(coords[2], coords[3]);
       context.stroke();
     }
+
     activePlayerName.className = "";
     activePlayerName = null;
-    setTimeout(() => {
-      alert(message);
-    });
-  };
-
-  const showRestartButton = function () {
     const startButton = document.querySelector(".start-button");
     startButton.className += " start-button--restart";
     startButton.textContent = "Restart Game";
     startButton.disabled = false;
+
+    setTimeout(() => {
+      alert(message);
+    });
   };
 
   const switchActivePlayerName = function () {
@@ -203,7 +201,6 @@ const DisplayController = (function () {
     displayBoard,
     resetBoard,
     showWinner,
-    showRestartButton,
     switchActivePlayerName,
   };
 })();
