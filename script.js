@@ -21,10 +21,10 @@ const Game = (function () {
       DisplayController.displayBoard();
       const winner = Gameboard.checkWinner();
       if (winner != null) {
+        const winMessage =
+          winner == "TIE" ? "Tie!" : `${activePlayer.getName()} wins!`;
+        DisplayController.showWinner(winMessage);
         gameOver = true;
-        if (winner != "TIE") {
-          DisplayController.drawWinningLine();
-        }
       } else {
         activePlayer = activePlayer == player1 ? player2 : player1;
         DisplayController.switchActivePlayerName();
@@ -60,21 +60,26 @@ const DisplayController = (function () {
     }
   };
 
-  const drawWinningLine = function () {
-    const winningLine = Gameboard.getWinningLine();
-    const coords = lineCoords.get(winningLine);
-    const canvas = document.querySelector("canvas");
-    const context = canvas.getContext("2d");
+  const showWinner = function (message) {
+    if (message != "Tie!") {
+      const winningLine = Gameboard.getWinningLine();
+      const coords = lineCoords.get(winningLine);
+      const canvas = document.querySelector("canvas");
+      const context = canvas.getContext("2d");
 
-    canvas.width = 1200;
-    canvas.height = 1200;
-    canvas.className = "canvas--visible";
-    context.lineWidth = 10;
+      canvas.width = 1200;
+      canvas.height = 1200;
+      canvas.className = "canvas--visible";
+      context.lineWidth = 10;
 
-    context.beginPath();
-    context.moveTo(coords[0], coords[1]);
-    context.lineTo(coords[2], coords[3]);
-    context.stroke();
+      context.beginPath();
+      context.moveTo(coords[0], coords[1]);
+      context.lineTo(coords[2], coords[3]);
+      context.stroke();
+    }
+    setTimeout(() => {
+      alert(message);
+    });
   };
 
   const switchActivePlayerName = function () {
@@ -151,7 +156,7 @@ const DisplayController = (function () {
     }
   });
 
-  return { displayBoard, drawWinningLine, switchActivePlayerName };
+  return { displayBoard, showWinner, switchActivePlayerName };
 })();
 
 function createPlayer(name, marker) {
