@@ -297,16 +297,16 @@ const Gameboard = (function () {
 
     if (row1Match || col1Match) {
       winningLine = row1Match ? "row1" : "col1";
-      return board[0][0];
+      return "WIN";
     } else if (row2Match || col2Match) {
       winningLine = row2Match ? "row2" : "col2";
-      return board[1][1];
+      return "WIN";
     } else if (row3Match || col3Match) {
       winningLine = row3Match ? "row3" : "col3";
-      return board[2][2];
+      return "WIN";
     } else if (diag1Match || diag2Match) {
       winningLine = diag1Match ? "diag1" : "diag2";
-      return board[1][1];
+      return "WIN";
     } else if (boardFull) {
       return "TIE";
     }
