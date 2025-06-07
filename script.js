@@ -95,9 +95,11 @@ const DisplayController = (function () {
     activePlayerName = null;
 
     const startButton = document.querySelector(".start-button");
-    startButton.classList.add("start-button--restart");
-    startButton.textContent = "Restart Game";
     startButton.disabled = false;
+    if (!startButton.classList.includes("start-button--restart")) {
+      startButton.classList.add("start-button--restart");
+      startButton.textContent = "Restart Game";
+    }
 
     const message = winner == "TIE" ? "Tie!" : `${winner} wins!`;
     const gameOverDialog = document.querySelector(".game-over-dialog");
@@ -165,8 +167,8 @@ const DisplayController = (function () {
   const handleFocusOutGameHeader = function (event) {
     if (event.target.className.includes("player-name")) {
       const name = event.target;
-      const names = Array.from(document.querySelectorAll(".player-name"));
       const isNameBlank = name.textContent == "";
+      const names = Array.from(document.querySelectorAll(".player-name"));
       const namesMatch = names[0].textContent == names[1].textContent;
 
       if (isNameBlank) {
@@ -193,12 +195,7 @@ const DisplayController = (function () {
     dialogCloseButton.addEventListener("click", handleClickDialogCloseButton);
   });
 
-  return {
-    displayBoard,
-    resetBoard,
-    displayWinner,
-    switchActivePlayerName,
-  };
+  return { displayBoard, resetBoard, displayWinner, switchActivePlayerName };
 })();
 
 function createPlayer(name, marker) {
@@ -221,15 +218,6 @@ const Gameboard = (function () {
     [".", ".", "."],
   ];
 
-  const setCell = function (marker, row, col) {
-    if (board[row][col] == ".") {
-      board[row][col] = marker;
-      return true;
-    } else {
-      return false;
-    }
-  };
-
   const reset = function () {
     winningLine = null;
     board = [
@@ -239,8 +227,21 @@ const Gameboard = (function () {
     ];
   };
 
+  const setCell = function (marker, row, col) {
+    if (board[row][col] == ".") {
+      board[row][col] = marker;
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   const getBoard = function () {
     return board;
+  };
+
+  const getWinningLine = function () {
+    return winningLine;
   };
 
   const checkWinner = function () {
@@ -281,17 +282,29 @@ const Gameboard = (function () {
       true
     );
 
-    if (row1Match || col1Match) {
-      winningLine = row1Match ? "row1" : "col1";
+    if (row1Match) {
+      winningLine = "row1";
       return "WIN";
-    } else if (row2Match || col2Match) {
-      winningLine = row2Match ? "row2" : "col2";
+    } else if (row2Match) {
+      winningLine = "row2";
       return "WIN";
-    } else if (row3Match || col3Match) {
-      winningLine = row3Match ? "row3" : "col3";
+    } else if (row3Match) {
+      winningLine = "row3";
       return "WIN";
-    } else if (diag1Match || diag2Match) {
-      winningLine = diag1Match ? "diag1" : "diag2";
+    } else if (col1Match) {
+      winningLine = "col1";
+      return "WIN";
+    } else if (col2Match) {
+      winningLine = "col2";
+      return "WIN";
+    } else if (col3Match) {
+      winningLine = "col3";
+      return "WIN";
+    } else if (diag1Match) {
+      winningLine = "diag1";
+      return "WIN";
+    } else if (diag2Match) {
+      winningLine = "diag2";
       return "WIN";
     } else if (boardFull) {
       return "TIE";
@@ -300,9 +313,5 @@ const Gameboard = (function () {
     return null;
   };
 
-  const getWinningLine = function () {
-    return winningLine;
-  };
-
-  return { setCell, reset, getBoard, checkWinner, getWinningLine };
+  return { setCell, reset, getBoard, getWinningLine, checkWinner };
 })();
