@@ -19,7 +19,6 @@ const Game = (function () {
 
   const playMove = function (row, col) {
     if (!gameStarted) {
-      console.log("HERE IN EARLY RETURN");
       return;
     }
 
@@ -70,9 +69,9 @@ const DisplayController = (function () {
     for (const cell of cells) {
       cell.textContent = "";
     }
+
     const canvas = document.querySelector("canvas");
-    const context = canvas.getContext("2d");
-    context.clearRect(0, 0, canvas.width, canvas.height);
+    canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
     canvas.className = "";
   };
 
