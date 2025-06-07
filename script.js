@@ -27,14 +27,14 @@ const Game = (function () {
     if (Gameboard.setCell(activePlayer.getMarker(), row, col)) {
       DisplayController.displayBoard();
       const winner = Gameboard.checkWinner();
-      if (winner != null) {
-        const winMessage =
-          winner == "TIE" ? "Tie!" : `${activePlayer.getName()} wins!`;
-        DisplayController.showWinner(winMessage);
-        gameOver = true;
-      } else {
+
+      if (winner == null) {
         activePlayer = activePlayer == player1 ? player2 : player1;
         DisplayController.switchActivePlayerName();
+      } else {
+        const winnerName = winner == "TIE" ? winner : activePlayer.getName();
+        DisplayController.displayWinner(winnerName);
+        gameOver = true;
       }
     }
   };
@@ -78,8 +78,8 @@ const DisplayController = (function () {
     canvas.className = "";
   };
 
-  const showWinner = function (message) {
-    if (message != "Tie!") {
+  const displayWinner = function (winner) {
+    if (winner != "TIE") {
       const winningLine = Gameboard.getWinningLine();
       const coords = lineCoords.get(winningLine);
       const canvas = document.querySelector("canvas");
@@ -103,6 +103,7 @@ const DisplayController = (function () {
     startButton.textContent = "Restart Game";
     startButton.disabled = false;
 
+    const message = winner == "TIE" ? "Tie!" : `${winner} wins!`;
     const gameOverDialog = document.querySelector(".game-over-dialog");
     gameOverDialog.lastChild.textContent = message;
     gameOverDialog.showModal();
@@ -209,7 +210,7 @@ const DisplayController = (function () {
   return {
     displayBoard,
     resetBoard,
-    showWinner,
+    displayWinner,
     switchActivePlayerName,
   };
 })();
