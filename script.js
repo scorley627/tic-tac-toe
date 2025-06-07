@@ -181,20 +181,21 @@ const DisplayController = (function () {
     }
   };
 
-  document.addEventListener("DOMContentLoaded", function () {
-    const gameboard = document.querySelector(".gameboard");
-    const startButton = document.querySelector(".start-button");
-    const gameHeader = document.querySelector(".game-header");
-    const dialogCloseButton = document.querySelector(
-      ".game-over-dialog__close-button"
-    );
-
-    gameboard.addEventListener("click", handleClickGameboard);
-    startButton.addEventListener("click", handleClickStartButton);
-    gameHeader.addEventListener("keypress", handleKeyPressGameHeader);
-    gameHeader.addEventListener("focusout", handleFocusOutGameHeader);
-    dialogCloseButton.addEventListener("click", handleClickDialogCloseButton);
-  });
+  document
+    .querySelector(".gameboard")
+    .addEventListener("click", handleClickGameboard);
+  document
+    .querySelector(".start-button")
+    .addEventListener("click", handleClickStartButton);
+  document
+    .querySelector(".game-header")
+    .addEventListener("keypress", handleKeyPressGameHeader);
+  document
+    .querySelector(".game-header")
+    .addEventListener("focusout", handleFocusOutGameHeader);
+  document
+    .querySelector(".game-over-dialog__close-button")
+    .addEventListener("click", handleClickDialogCloseButton);
 
   return { displayBoard, resetBoard, displayWinner, switchActivePlayerName };
 })();
