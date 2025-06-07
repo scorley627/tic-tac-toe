@@ -82,8 +82,6 @@ const DisplayController = (function () {
       const canvas = document.querySelector("canvas");
       const context = canvas.getContext("2d");
 
-      canvas.width = 1200;
-      canvas.height = 1200;
       canvas.className = "canvas--visible";
       context.lineWidth = 10;
 
