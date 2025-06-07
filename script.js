@@ -130,8 +130,6 @@ const DisplayController = (function () {
     const isRestartButton = startButton.className.includes("restart");
     startButton.disabled = true;
 
-    console.log(isRestartButton);
-
     const names = Array.from(document.querySelectorAll(".player-name"));
     activePlayerName = names[0];
     activePlayerName.classList.add("player-name--active");
