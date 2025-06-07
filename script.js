@@ -72,7 +72,7 @@ const DisplayController = (function () {
 
     const canvas = document.querySelector("canvas");
     canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
-    canvas.className = "";
+    canvas.classList.remove("canvas--visible");
   };
 
   const displayWinner = function (winner) {
@@ -82,7 +82,7 @@ const DisplayController = (function () {
       const canvas = document.querySelector("canvas");
       const context = canvas.getContext("2d");
 
-      canvas.className = "canvas--visible";
+      canvas.classList.add("canvas--visible");
       context.lineWidth = 10;
 
       context.beginPath();
@@ -91,11 +91,11 @@ const DisplayController = (function () {
       context.stroke();
     }
 
-    activePlayerName.className = "";
+    activePlayerName.classList.remove("player-name--active");
     activePlayerName = null;
 
     const startButton = document.querySelector(".start-button");
-    startButton.className += " start-button--restart";
+    startButton.classList.add("start-button--restart");
     startButton.textContent = "Restart Game";
     startButton.disabled = false;
 
@@ -106,96 +106,91 @@ const DisplayController = (function () {
   };
 
   const switchActivePlayerName = function () {
-    const names = document.querySelectorAll(".game-header h1");
-    activePlayerName.className = "";
+    const names = document.querySelectorAll(".player-name");
+    activePlayerName.classList.remove("player-name--active");
     activePlayerName = activePlayerName == names[0] ? names[1] : names[0];
-    activePlayerName.className = "player-name--active";
+    activePlayerName.classList.add("player-name--active");
   };
 
-  const handleClickOnCell = function (clickedCell) {
-    const cells = document.querySelectorAll(".gameboard__cell");
-    const index = Array.from(cells).indexOf(clickedCell);
-    const row = Math.floor(index / 3);
-    const col = index % 3;
-    Game.playMove(row, col);
-  };
-
-  const handleClickStartButton = function (startButton) {
-    startButton.disabled = true;
-    const names = Array.from(document.querySelectorAll(".game-header h1"));
-    for (const name of names) {
-      name.contentEditable = false;
+  const handleClickGameboard = function (event) {
+    if (event.target.className == "gameboard__cell") {
+      const clickedCell = event.target;
+      const cells = document.querySelectorAll(".gameboard__cell");
+      const index = Array.from(cells).indexOf(clickedCell);
+      const row = Math.floor(index / 3);
+      const col = index % 3;
+      Game.playMove(row, col);
     }
-    activePlayerName = names[0];
-    activePlayerName.className = "player-name--active";
-    Game.startGame(names[0].textContent, names[1].textContent);
   };
 
-  const handleClickRestartButton = function (restartButton) {
-    restartButton.disabled = true;
-    const names = Array.from(document.querySelectorAll(".game-header h1"));
+  const handleClickStartButton = function (event) {
+    const startButton = event.target;
+    startButton.disabled = true;
+
+    const names = Array.from(document.querySelectorAll(".player-name"));
     activePlayerName = names[0];
-    activePlayerName.className = "player-name--active";
-    Game.restartGame();
+    activePlayerName.classList.add("player-name--active");
+
+    if (!startButton.className.includes("start-button--restart")) {
+      for (const name of names) {
+        name.contentEditable = false;
+      }
+      Game.startGame(names[0].textContent, names[1].textContent);
+    } else {
+      Game.restartGame();
+    }
   };
 
-  const handleClickDialogCloseButton = function (dialog) {
+  const handleClickDialogCloseButton = function (event) {
+    const dialog = event.target.parentNode;
     dialog.lastChild.textContent = "";
     dialog.close();
   };
 
-  document.addEventListener("click", function (event) {
-    const isCell = event.target.className == "gameboard__cell";
-    const isStartButton = event.target.className == "start-button";
-    const isRestartButton = event.target.className.includes(
-      "start-button--restart"
+  const handleKeyPressGameHeader = function (event) {
+    if (event.target.className.includes("player-name")) {
+      const name = event.target;
+      const isNameFull = name.textContent.length == 14;
+      const isDeleting = event.key == "Backspace" || event.key == "Delete";
+
+      if (event.key == "Enter") {
+        event.preventDefault();
+        name.blur();
+      } else if (isNameFull && !isDeleting) {
+        event.preventDefault();
+      }
+    }
+  };
+
+  const handleFocusOutGameHeader = function (event) {
+    if (event.target.className.includes("player-name")) {
+      const name = event.target;
+      const names = Array.from(document.querySelectorAll(".player-name"));
+      const isNameBlank = name.textContent == "";
+      const namesMatch = names[0].textContent == names[1].textContent;
+
+      if (isNameBlank) {
+        name.textContent = name == names[0] ? "Player 1" : "Player 2";
+      } else if (namesMatch) {
+        names[0].textContent += " 1";
+        names[1].textContent += " 2";
+      }
+    }
+  };
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const gameboard = document.querySelector(".gameboard");
+    const startButton = document.querySelector(".start-button");
+    const gameHeader = document.querySelector(".game-header");
+    const dialogCloseButton = document.querySelector(
+      ".game-over-dialog__close-button"
     );
-    const isDialogCloseButton =
-      event.target == document.querySelector(".game-over-dialog button");
 
-    if (isCell) {
-      handleClickOnCell(event.target);
-    } else if (isStartButton) {
-      handleClickStartButton(event.target);
-    } else if (isRestartButton) {
-      handleClickRestartButton(event.target);
-    } else if (isDialogCloseButton) {
-      handleClickDialogCloseButton(event.target.parentNode);
-    }
-  });
-
-  document.addEventListener("keypress", function (event) {
-    const isPlayerName = Array.from(
-      document.querySelectorAll(".game-header h1")
-    ).includes(event.target);
-    const isPlayerNameFull =
-      isPlayerName && event.target.textContent.length == 14;
-    const isRemovingText = event.key == "Backspace" || event.key == "Delete";
-
-    if (isPlayerName && event.key == "Enter") {
-      event.preventDefault();
-      event.target.blur();
-    } else if (isPlayerNameFull && !isRemovingText) {
-      event.preventDefault();
-    }
-  });
-
-  document.addEventListener("focusout", function (event) {
-    const playerNames = Array.from(
-      document.querySelectorAll(".game-header h1")
-    );
-    const isPlayerName = playerNames.includes(event.target);
-    const playerNameBlank = isPlayerName && event.target.textContent == "";
-    const playerNamesMatch =
-      isPlayerName && playerNames[0].textContent == playerNames[1].textContent;
-
-    if (playerNameBlank) {
-      event.target.textContent =
-        event.target == playerNames[0] ? "Player 1" : "Player 2";
-    } else if (playerNamesMatch) {
-      playerNames[0].textContent += " 1";
-      playerNames[1].textContent += " 2";
-    }
+    gameboard.addEventListener("click", handleClickGameboard);
+    startButton.addEventListener("click", handleClickStartButton);
+    gameHeader.addEventListener("keypress", handleKeyPressGameHeader);
+    gameHeader.addEventListener("focusout", handleFocusOutGameHeader);
+    dialogCloseButton.addEventListener("click", handleClickDialogCloseButton);
   });
 
   return {

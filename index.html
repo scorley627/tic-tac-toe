@@ -9,8 +9,10 @@
 </head>
 <body>
   <div class="game-header">
-    <h1 contenteditable="true" spellcheck="false">Player 1</h1>
-    <h1 contenteditable="true" spellcheck="false">Player 2</h1>
+    <h1 class="player-name" contenteditable="true" spellcheck="false">Player 1
+    </h1>
+    <h1 class="player-name" contenteditable="true" spellcheck="false">Player 2
+    </h1>
     <button class="start-button">Start Game</button>
   </div>
   <canvas width="1200" height="1200"></canvas>
@@ -26,7 +28,7 @@
     <div class="gameboard__cell"></div>
   </div>
   <dialog class="game-over-dialog">
-    <button>&times;</button>
+    <button class="game-over-dialog__close-button">&times;</button>
     <h1>Game Over</h1>
     <span></span>
   </dialog>

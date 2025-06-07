@@ -92,7 +92,7 @@ canvas {
   font-size: 1.5em;
 }
 
-.game-over-dialog button {
+.game-over-dialog__close-button {
   position: absolute;
   top: 8px;
   right: 16px;
