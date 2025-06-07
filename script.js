@@ -103,9 +103,9 @@ const DisplayController = (function () {
     startButton.textContent = "Restart Game";
     startButton.disabled = false;
 
-    setTimeout(() => {
-      alert(message);
-    });
+    const gameOverDialog = document.querySelector(".game-over-dialog");
+    gameOverDialog.lastChild.textContent = message;
+    gameOverDialog.showModal();
   };
 
   const switchActivePlayerName = function () {
@@ -147,12 +147,19 @@ const DisplayController = (function () {
     Game.restartGame();
   };
 
+  const handleClickDialogCloseButton = function (dialog) {
+    dialog.lastChild.textContent = "";
+    dialog.close();
+  };
+
   document.addEventListener("click", function (event) {
     const isCell = event.target.className == "gameboard__cell";
     const isStartButton = event.target.className == "start-button";
     const isRestartButton = event.target.className.includes(
       "start-button--restart"
     );
+    const isDialogCloseButton =
+      event.target == document.querySelector(".game-over-dialog button");
 
     if (isCell) {
       handleClickOnCell(event.target);
@@ -160,6 +167,8 @@ const DisplayController = (function () {
       handleClickStartButton(event.target);
     } else if (isRestartButton) {
       handleClickRestartButton(event.target);
+    } else if (isDialogCloseButton) {
+      handleClickDialogCloseButton(event.target.parentNode);
     }
   });
 

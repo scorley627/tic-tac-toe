@@ -69,3 +69,36 @@ canvas {
 .canvas--visible {
   z-index: 1;
 }
+
+.game-over-dialog {
+  box-sizing: border-box;
+  padding: 16px;
+  width: 250px;
+  height: 100px;
+  position: fixed;
+  left: calc(50% - 125px);
+  top: calc(50% - 50px);
+  background-color: lightgray;
+  border: none;
+  border-radius: 25px;
+}
+
+.game-over-dialog::backdrop {
+  background-color: rgba(128, 128, 128, 0.664);
+}
+
+.game-over-dialog h1 {
+  margin-bottom: 12px;
+  font-size: 1.5em;
+}
+
+.game-over-dialog button {
+  position: absolute;
+  top: 8px;
+  right: 16px;
+  font-size: 35px;
+  background-color: lightgray;
+  border: none;
+  cursor: pointer;
+  color: rgb(71, 71, 71);
+}
