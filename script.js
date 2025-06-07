@@ -96,7 +96,7 @@ const DisplayController = (function () {
 
     const startButton = document.querySelector(".start-button");
     startButton.disabled = false;
-    if (!startButton.classList.includes("start-button--restart")) {
+    if (!startButton.className.includes("restart")) {
       startButton.classList.add("start-button--restart");
       startButton.textContent = "Restart Game";
     }
@@ -127,13 +127,16 @@ const DisplayController = (function () {
 
   const handleClickStartButton = function (event) {
     const startButton = event.target;
+    const isRestartButton = startButton.className.includes("restart");
     startButton.disabled = true;
+
+    console.log(isRestartButton);
 
     const names = Array.from(document.querySelectorAll(".player-name"));
     activePlayerName = names[0];
     activePlayerName.classList.add("player-name--active");
 
-    if (!startButton.className.includes("start-button--restart")) {
+    if (!isRestartButton) {
       for (const name of names) {
         name.contentEditable = false;
       }
