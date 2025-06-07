@@ -93,6 +93,7 @@ const DisplayController = (function () {
 
     activePlayerName.className = "";
     activePlayerName = null;
+
     const startButton = document.querySelector(".start-button");
     startButton.className += " start-button--restart";
     startButton.textContent = "Restart Game";
@@ -105,10 +106,9 @@ const DisplayController = (function () {
   };
 
   const switchActivePlayerName = function () {
-    const playerNames = document.querySelectorAll(".game-header h1");
+    const names = document.querySelectorAll(".game-header h1");
     activePlayerName.className = "";
-    activePlayerName =
-      activePlayerName == playerNames[0] ? playerNames[1] : playerNames[0];
+    activePlayerName = activePlayerName == names[0] ? names[1] : names[0];
     activePlayerName.className = "player-name--active";
   };
 
@@ -122,23 +122,19 @@ const DisplayController = (function () {
 
   const handleClickStartButton = function (startButton) {
     startButton.disabled = true;
-    const playerNames = Array.from(
-      document.querySelectorAll(".game-header h1")
-    );
-    for (const name of playerNames) {
+    const names = Array.from(document.querySelectorAll(".game-header h1"));
+    for (const name of names) {
       name.contentEditable = false;
     }
-    activePlayerName = playerNames[0];
+    activePlayerName = names[0];
     activePlayerName.className = "player-name--active";
-    Game.startGame(playerNames[0].textContent, playerNames[1].textContent);
+    Game.startGame(names[0].textContent, names[1].textContent);
   };
 
   const handleClickRestartButton = function (restartButton) {
     restartButton.disabled = true;
-    const playerNames = Array.from(
-      document.querySelectorAll(".game-header h1")
-    );
-    activePlayerName = playerNames[0];
+    const names = Array.from(document.querySelectorAll(".game-header h1"));
+    activePlayerName = names[0];
     activePlayerName.className = "player-name--active";
     Game.restartGame();
   };
