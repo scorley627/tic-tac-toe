@@ -3,7 +3,6 @@ const Game = (function () {
   let player2 = null;
   let activePlayer = null;
   let gameStarted = false;
-  let gameOver = false;
 
   const startGame = function (playerName1, playerName2) {
     player1 = createPlayer(playerName1, "X");
@@ -16,11 +15,11 @@ const Game = (function () {
     Gameboard.reset();
     DisplayController.resetBoard();
     activePlayer = player1;
-    gameOver = false;
   };
 
   const playMove = function (row, col) {
-    if (!gameStarted || gameOver) {
+    if (!gameStarted) {
+      console.log("HERE IN EARLY RETURN");
       return;
     }
 
@@ -34,7 +33,6 @@ const Game = (function () {
       } else {
         const winnerName = winner == "TIE" ? winner : activePlayer.getName();
         DisplayController.displayWinner(winnerName);
-        gameOver = true;
       }
     }
   };
