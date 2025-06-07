@@ -168,7 +168,7 @@ const DisplayController = (function () {
       document.querySelectorAll(".game-header h1")
     ).includes(event.target);
     const isPlayerNameFull =
-      isPlayerName && event.target.textContent.length == 20;
+      isPlayerName && event.target.textContent.length == 14;
     const isRemovingText = event.key == "Backspace" || event.key == "Delete";
 
     if (isPlayerName && event.key == "Enter") {

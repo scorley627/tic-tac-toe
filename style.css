@@ -10,6 +10,8 @@
   justify-items: center;
   row-gap: 16px;
   background-color: lightgray;
+  white-space: nowrap;
+  min-width: min-content;
 }
 
 .player-name--active {
